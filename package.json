@@ -1,0 +1,34 @@
+{
+  "name": "mern_auth_backend",
+  "version": "1.0.0",
+  "description": "This is a CRUD AUTH MERN Model or Boilerplate",
+  "main": "template.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CarlosPimentel10/mern_auth_backend.git"
+  },
+  "author": "Carlos Pimentel",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/CarlosPimentel10/mern_auth_backend/issues"
+  },
+  "homepage": "https://github.com/CarlosPimentel10/mern_auth_backend#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.24.8",
+    "@babel/core": "^7.25.2",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/plugin-transform-class-properties": "^7.25.4",
+    "@babel/plugin-transform-runtime": "^7.25.4",
+    "@babel/preset-env": "^7.25.4",
+    "@babel/preset-react": "^7.24.7",
+    "webpack": "^5.94.0",
+    "webpack-cli": "^5.1.4",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "dependencies": {
+    "glob": "^11.0.0"
+  }
+}
