@@ -32,6 +32,7 @@
     "webpack-node-externals": "^3.0.0"
   },
   "dependencies": {
-    "glob": "^11.0.0"
+    "glob": "^11.0.0",
+    "nodemon": "^3.1.4"
   }
 }
