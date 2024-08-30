@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema({
     name:{
         type: String,
         trim: true,
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
     salt: String
 });
 
-userSchema
+UserSchema
     .virtual('password')
     .set(function(password){
         this._password = password
@@ -36,7 +36,7 @@ userSchema
         return this._password
     })
 
-    userSchema.methods = {
+    UserSchema.methods = {
         authenthicate: function(plainText){
             return this.encryptPassword(plainText) === this.hashed_password
         },
@@ -57,7 +57,7 @@ userSchema
         }
     }
 
-    userSchema.path('hashed_password').validate(function(v){
+    UserSchema.path('hashed_password').validate(function(v){
         if(this._password && this._password.length < 6){
             this.invalidate('password', 'Password must be at least 6 characters');
         }
@@ -65,3 +65,5 @@ userSchema
             this.invalidate('password', 'Password is required');
         }
     }, null);
+
+    export default mongoose.model('User', UserSchema)
