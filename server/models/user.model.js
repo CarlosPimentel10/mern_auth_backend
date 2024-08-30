@@ -35,3 +35,24 @@ userSchema
     .get(function(){
         return this._password
     })
+
+    userSchema.methods = {
+        authenthicate: function(plainText){
+            return this.encryptPassword(plainText) === this.hashed_password
+        },
+        encryptPassword: function(password){
+            if(!password) return '';
+            try{
+                return crypto
+                .createHmac('shal', this.salt)
+                .update(password)
+                .digest('hex')
+            }
+            catch(err){
+                return ''
+            }
+        },
+        makeSalt: function(){
+            return Math.round((new Date().valueOf() * Math.random())) + ''
+        }
+    }
