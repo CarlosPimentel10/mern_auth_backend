@@ -22,8 +22,14 @@ app.listen(port, function onStart(err){
     console.info('Server started on port %s.', port)
 })
 
-const url = process.env.MONGODB_URI || 'mongodb://localhost:27017'
-MongoClient.connect(url, (err, db) => {
-    console.log("Connected successfully to mongodb server")
-    db.close()
-})
+
+
+const url = process.env.MONGODB_URI || 'mongodb://localhost:27017';
+MongoClient.connect(url, (err, client) => {
+    if (err) {
+        console.error('Failed to connect to MongoDB:', err);
+        return;
+    }
+    console.log("Connected successfully to MongoDB server");
+    client.close(); // Don't forget to close the connection when done!
+});
