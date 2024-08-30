@@ -3,8 +3,11 @@ import devBundle from './devBundle'
 import path from 'path'
 import template from '../template'
 import { MongoClient } from 'mongodb'
+import config from '../config/config';
+import app from './express';
+import mongoose from 'mongoose';
 
-const app = express()
+// const app = express()
 devBundle.compile(app)
 
 const CURRENT_WORKING_DIR = process.cwd()
@@ -22,7 +25,14 @@ app.listen(port, function onStart(err){
     console.info('Server started on port %s.', port)
 })
 
+// start the server
 
+app.listen(config.port, (err) => {
+    if(err){
+        console.log(err);
+    }
+    console.info("Server started on port %s.", config.port);
+});
 
 const url = process.env.MONGODB_URI || 'mongodb://localhost:27017/';
 MongoClient.connect(url, (err, db) => {
@@ -32,8 +42,7 @@ MongoClient.connect(url, (err, db) => {
     }
     console.log("Connected successfully to MongoDB server");
 
-    const db = client.db('mernSimpleDB'); 
-    const collection = db.collection('mern'); 
+    
 
     // Insert a document
     collection.insertOne({ name: 'Test Document', value: 42 }, (err, result) => {
@@ -44,4 +53,11 @@ MongoClient.connect(url, (err, db) => {
         }
         client.close(); // Close the connection when done
     });
+});
+
+mongoose.Promise = global.Promise;
+mongoose.connect(config.mongoUri);
+
+mongoose.connection.on('error', () => {
+    throw new Error(`unable to connect to database: ${mongoUri}`);
 });
