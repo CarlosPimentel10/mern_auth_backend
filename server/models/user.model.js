@@ -56,3 +56,12 @@ userSchema
             return Math.round((new Date().valueOf() * Math.random())) + ''
         }
     }
+
+    userSchema.path('hashed_password').validate(function(v){
+        if(this._password && this._password.length < 6){
+            this.invalidate('password', 'Password must be at least 6 characters');
+        }
+        if(this.isNew && !this._password){
+            this.invalidate('password', 'Password is required');
+        }
+    }, null);
