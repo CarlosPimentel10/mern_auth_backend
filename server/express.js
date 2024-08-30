@@ -1,6 +1,21 @@
 import express from 'express';
-import devBundle from './devBundle';
+//import devBundle from './devBundle';
+import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
+import compress from 'compression';
+import cors from 'cors';
+import helmet from 'helmet';
 
 const app = express();
 
-devBundle.compile(app);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true}));
+
+app.use(cookieParser());
+app.use(compress());
+app.use(helmet());
+app.use(cors());
+
+// devBundle.compile(app);
+
+export default app;
