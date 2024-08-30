@@ -24,12 +24,24 @@ app.listen(port, function onStart(err){
 
 
 
-const url = process.env.MONGODB_URI || 'mongodb://localhost:27017';
+const url = process.env.MONGODB_URI || 'mongodb://localhost:27017/';
 MongoClient.connect(url, (err, client) => {
     if (err) {
         console.error('Failed to connect to MongoDB:', err);
         return;
     }
     console.log("Connected successfully to MongoDB server");
-    client.close(); // Don't forget to close the connection when done!
+
+    const db = client.db('mernSimpleDB'); // Replace with your actual database name
+    const collection = db.collection('mern'); // Replace with your collection name
+
+    // Insert a document
+    collection.insertOne({ name: 'Test Document', value: 42 }, (err, result) => {
+        if (err) {
+            console.error('Error inserting document:', err);
+        } else {
+            console.log('Inserted document:', result.ops);
+        }
+        client.close(); // Close the connection when done
+    });
 });
