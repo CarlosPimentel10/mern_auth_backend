@@ -66,8 +66,13 @@ app.get('/api/users', async (req, res) => {
 // Example for creating users
 app.post('/api/users', async(req, res) => {
     try {
-        const {name, value } = req.body;
-        const newUser = new User({name, value});
+        const {name, email, password } = req.body;
+        // validate
+        if(!name || !email || !password){
+            return res.status(400).json({error: 'Name, email and password are required.'})
+        }
+        const hashed_password = password;
+        const newUser = new User({name, email, password:hashed_password});
         const savedUser = await newUser.save();
         return res.status(201).json(savedUser);
     } catch (error) {
