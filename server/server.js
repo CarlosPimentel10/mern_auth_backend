@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
 });
 
 // MongoDB Connection
-const url = process.env.MONGODB_URI || config.mongoUri || 'mongodb://localhost:27017/mernSimpleDB';
+const url = process.env.MONGODB_URI || config.mongoUri || 'mongodb://localhost:27017/';
 
 // Connect to MongoDB using Mongoose
 mongoose.connect(url)
@@ -44,8 +44,11 @@ mongoose.connection.on('error', (err) => {
 // Define a simple User schema if needed
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    value: { type: Number, required: true },
+    email: {type: String, required: true, unique:true},
+    password: {type: String, required: true},
 });
+
+
 
 const User = mongoose.model('User', userSchema);
 
@@ -60,7 +63,21 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
-// Optionally, define a function to insert a test document into the database
+// Example for creating users
+app.post('/api/users', async(req, res) => {
+    try {
+        const {name, value } = req.body;
+        const newUser = new User({name, value});
+        const savedUser = await newUser.save();
+        return res.status(201).json(savedUser);
+    } catch (error) {
+        console.error('Error creating user:', error);
+        return res.status(500).json({error: error.message});
+        
+    }
+})
+
+// function to insert a test document into the database
 const insertTestDocument = async () => {
     try {
         const newUser = new User({ name: 'Test Document', value: 42 });
