@@ -1,5 +1,5 @@
 import express from 'express';
-//import devBundle from './devBundle';
+import devBundle from './devBundle';
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 import compress from 'compression';
@@ -22,6 +22,8 @@ app.use((err, req, res, next) => {
         res.status(401).json({"error": err.name + ": " + err.message});
     }
 })
-// devBundle.compile(app);
+
+
+devBundle.compile(app);
 
 export default app;

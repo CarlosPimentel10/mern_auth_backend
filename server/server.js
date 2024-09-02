@@ -1,63 +1,74 @@
-import express from 'express'
-import devBundle from './devBundle'
-import path from 'path'
-import template from '../template'
-import { MongoClient } from 'mongodb'
-import config from '../config/config';
-import app from './express';
+import express from 'express';
+import devBundle from './devBundle';
+import path from 'path';
+import template from '../template';
 import mongoose from 'mongoose';
+import config from '../config/config'; 
 
-// const app = express()
-devBundle.compile(app)
+// Initialize express app
+const app = express();
+devBundle.compile(app);
 
-const CURRENT_WORKING_DIR = process.cwd()
-app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')))
+// Serve static files
+const CURRENT_WORKING_DIR = process.cwd();
+app.use('/dist', express.static(path.join(CURRENT_WORKING_DIR, 'dist')));
 
+// Root route
 app.get('/', (req, res) => {
-    res.status(200).send(template())
-})
-
-let port = process.env.PORT || 3000
-app.listen(port, function onStart(err){
-    if(err){
-        console.log(err)
-    }
-    console.info('Server started on port %s.', port)
-})
-
-// start the server
-
-app.listen(config.port, (err) => {
-    if(err){
-        console.log(err);
-    }
-    console.info("Server started on port %s.", config.port);
+    res.status(200).send(template());
 });
 
-const url = process.env.MONGODB_URI || 'mongodb://localhost:27017/';
-MongoClient.connect(url, (err, db) => {
-    if (err) {
+// MongoDB Connection
+const url = process.env.MONGODB_URI || config.mongoUri || 'mongodb://localhost:27017/mernSimpleDB';
+
+// Connect to MongoDB using Mongoose
+mongoose.connect(url)
+    .then(() => {
+        console.log("Connected successfully to MongoDB server");
+
+        // Start the server after successful connection
+        const port = process.env.PORT || config.port || 3000; // Check config.port if defined
+        app.listen(port, () => {
+            console.info('Server started on port %s.', port);
+        });
+    })
+    .catch(err => {
         console.error('Failed to connect to MongoDB:', err);
-        return;
-    }
-    console.log("Connected successfully to MongoDB server");
-
-    
-
-    // Insert a document
-    collection.insertOne({ name: 'Test Document', value: 42 }, (err, result) => {
-        if (err) {
-            console.error('Error inserting document:', err);
-        } else {
-            console.log('Inserted document:', result.ops);
-        }
-        client.close(); // Close the connection when done
     });
+
+// Handle MongoDB connection errors
+mongoose.connection.on('error', (err) => {
+    console.error('MongoDB connection error:', err);
 });
 
-mongoose.Promise = global.Promise;
-mongoose.connect(config.mongoUri);
-
-mongoose.connection.on('error', () => {
-    throw new Error(`unable to connect to database: ${mongoUri}`);
+// Define a simple User schema if needed
+const userSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    value: { type: Number, required: true },
 });
+
+const User = mongoose.model('User', userSchema);
+
+// Example API route for fetching users
+app.get('/api/users', async (req, res) => {
+    try {
+        const users = await User.find({});
+        return res.status(200).json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        return res.status(500).json({ error: error.message });
+    }
+});
+
+// Optionally, define a function to insert a test document into the database
+const insertTestDocument = async () => {
+    try {
+        const newUser = new User({ name: 'Test Document', value: 42 });
+        const savedUser = await newUser.save();
+        console.log('Inserted document:', savedUser);
+    } catch (error) {
+        console.error('Error inserting document:', error);
+    }
+};
+
+
