@@ -17,6 +17,11 @@ app.use(compress());
 app.use(helmet());
 app.use(cors());
 app.use('/', userRoutes)
+app.use((err, req, res, next) => {
+    if(err.name === 'UnauthorizedError'){
+        res.status(401).json({"error": err.name + ": " + err.message});
+    }
+})
 // devBundle.compile(app);
 
 export default app;
