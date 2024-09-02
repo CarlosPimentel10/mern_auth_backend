@@ -1,18 +1,22 @@
 import User from '../models/user.model';
 import jwt from 'jsonwebtoken';
-import expressJwt from 'express-jwt';
+import { expressjwt } from 'express-jwt';
 import config from './../../config/config';
+
+
 
 const signin = (req, res) => {
     User.findOne({
         "email": req.body.email
     }, (err, user) => {
-        if(err || !user){
-            error: "User not found"
+        if (err || !user) {
+            return res.status(401).json({
+                error: "User not found"
+            })
         }
     })
-    if(!user.authenticate(req.body.password)){
-        return res.status('401').send({
+    if (!user.authenticate(req.body.password)) {
+        return res.status(401).send({
             error: "Email and password don't match"
         })
     }
@@ -24,7 +28,7 @@ const signin = (req, res) => {
     })
     return res.json({
         token,
-        user: {_id: user._id, name: user.name, email: user.email}
+        user: { _id: user._id, name: user.name, email: user.email }
     })
 }
 const signout = (req, res) => {
@@ -33,18 +37,19 @@ const signout = (req, res) => {
         message: "Signed out"
     })
 }
-const requireSignin = expressJwt({
+const requireSignin = expressjwt({
     secret: config.jwtSecret,
-    userProperty: 'auth'
-})
-const hasAuthorization = (req, res) => {
+    algorithms: ['HS256'],  
+    userProperty: 'auth'    
+});
+const hasAuthorization = (req, res, next) => {
     const authorized = req.profile && req.auth && req.profile._id == req.auth._id;
-    if(!(authorized)){
+    if (!(authorized)) {
         return res.status(403).json({
             error: "User is not authorized"
         })
     }
-    next();
+    next()
 }
 
-export default {signin, signout, requireSignin, hasAuthorization}
+export default { signin, signout, requireSignin, hasAuthorization }
