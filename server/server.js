@@ -18,6 +18,9 @@ app.get('/', (req, res) => {
     res.status(200).send(template());
 });
 
+// Process Data as JSON
+app.use(express.json());
+
 // MongoDB Connection
 const url = process.env.MONGODB_URI || config.mongoUri || 'mongodb://localhost:27017/';
 
