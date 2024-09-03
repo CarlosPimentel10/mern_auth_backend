@@ -2,18 +2,22 @@ import User from '../models/user.model';
 import _ from 'lodash';
 import errorHandler from '../helpers/dbErrorHandler';
 
-const create = (req, res) => {
-    const user = new User(req.body);
-    user.save((err, result) => {
-        if (err) {
-            return res.status(400).json({
-                error: errorHandler.getErrorMessage(err)
-            })
-        }
-        res.status(200).json({
-            message: "Successfully signed up!"
+const create = async (req, res) => {
+    const {name, email, password } = req.body;
+    if(!name || !email || !password){
+        return res.status(400).json({
+            error: 'Name, email and password are required'
         })
-    })
+    }
+    
+    try {
+        const result = await user.save();
+        res.status(201).json(result);
+    } catch (error) {
+        return res.status(400).json({
+            error: errorHandler.getErrorMessage(error)
+        })
+    }
 }
 const list = (req, res) => {
     User.find((err, users) => {
