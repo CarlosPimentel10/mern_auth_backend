@@ -24,6 +24,7 @@ describe('Express App', () => {
             .send(newUser);
         
         console.log(res.body) // checking log
+        // TODO:Review failing user creation test
         expect(res.statusCode).toBe(201); // Successful creation
         expect(res.body).toHaveProperty('_id');
         expect(res.body.name).toBe(newUser.name);
