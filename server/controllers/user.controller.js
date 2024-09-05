@@ -9,9 +9,9 @@ const create = async (req, res) => {
             error: 'Name, email and password are required'
         })
     }
-    
+    const newUser = new User({ name, email, password });
     try {
-        const result = await user.save();
+        const result = await newUser.save();
         res.status(201).json(result);
     } catch (error) {
         return res.status(400).json({
@@ -22,7 +22,7 @@ const create = async (req, res) => {
 const list = (req, res) => {
     User.find((err, users) => {
         if (err) {
-            return err.status(400).json({
+            return res.status(400).json({
                 error: errorHandler.getErrorMessage(err)
             })
         }

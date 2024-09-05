@@ -58,7 +58,7 @@ const User = mongoose.model('User', userSchema);
 // Example API route for fetching users
 app.get('/api/users', async (req, res) => {
     try {
-        const users = await User.find({});
+        const users = await User.find();
         return res.status(200).json(users);
     } catch (error) {
         console.error('Error fetching users:', error);
@@ -95,5 +95,6 @@ const insertTestDocument = async () => {
         console.error('Error inserting document:', error);
     }
 };
+
 
 
