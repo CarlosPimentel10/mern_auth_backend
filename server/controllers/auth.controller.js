@@ -7,19 +7,20 @@ import config from './../../config/config';
 
 const signin = (req, res) => {
     User.findOne({
-        "email": req.body.email
+        email: req.body.email
     }, (err, user) => {
         if (err || !user) {
             return res.status(401).json({
                 error: "User not found"
             })
         }
+        if (!user.authenticate(req.body.password)) {
+            return res.status(401).send({
+                error: "Email and password don't match"
+            })
+        }
     })
-    if (!user.authenticate(req.body.password)) {
-        return res.status(401).send({
-            error: "Email and password don't match"
-        })
-    }
+    
     const token = jwt.sign({
         _id: user._id
     }, config.jwtSecret)
@@ -39,8 +40,8 @@ const signout = (req, res) => {
 }
 const requireSignin = expressjwt({
     secret: config.jwtSecret,
-    algorithms: ['HS256'],  
-    userProperty: 'auth'    
+    algorithms: ['HS256'],
+    userProperty: 'auth'
 });
 const hasAuthorization = (req, res, next) => {
     const authorized = req.profile && req.auth && req.profile._id == req.auth._id;
